@@ -7,6 +7,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import com.app.vertx.Metric;
 
 /**
  * Hello world!
@@ -14,7 +15,7 @@ import io.vertx.ext.web.Router;
  */
 public class App 
 {
-    private static final StatsDClient statsd = new NonBlockingStatsDClient("nehomes.be","172.26.116.42", 30385);
+    private static final Metric metric = new Metric();
     public static void main( String[] args )
     {
         System.out.println( "Hello World!" );
@@ -27,14 +28,14 @@ public class App
         router
                 .get("/api/test/:name")
                 .handler(routingConext -> {
-                    System.out.println("In my handler test");
                     String name = routingConext.request().getParam("name");
                     JsonObject json =  new JsonObject().put("message", name);
                     HttpServerResponse response  = routingConext.response();
-                    statsd.increment("java.test.success");
 
-                    //response.setChunked(true);
-                    //response.write("Hey you there!");
+                    metric.success("testapi");
+                    metric.error("testapi");
+                    metric.fail("testapi");
+
                     response.putHeader("content-type","application/json");
                     response.end(json.encode());
                 });
