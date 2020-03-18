@@ -29,12 +29,13 @@ public class App
                 .get("/api/test/:name")
                 .handler(routingConext -> {
                     String name = routingConext.request().getParam("name");
+                    JsonObject data = new JsonObject();
                     JsonObject json =  new JsonObject().put("message", name);
                     HttpServerResponse response  = routingConext.response();
 
-                    metric.success("testapi");
-                    metric.error("testapi");
-                    metric.fail("testapi");
+                    metric.success("testapi",data);
+                    metric.error("testapi",data);
+                    metric.fail("testapi",data.put("missionId","1234"));
 
                     response.putHeader("content-type","application/json");
                     response.end(json.encode());
